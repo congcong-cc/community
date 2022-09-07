@@ -4,11 +4,18 @@ import com.alibaba.fastjson2.JSONObject;
 import life.majiang.community.Provider.GitHubProvider;
 import life.majiang.community.Provider.GitHubUser;
 import life.majiang.community.dto.AccessTokenDTO;
+import life.majiang.community.mapper.UserMapper;
+import life.majiang.community.model.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.util.UUID;
 
 @Controller
 public class CallBackController {
@@ -21,9 +28,11 @@ public class CallBackController {
     private String clientSecret;
     @Value("${github.redirect.url}")
     private String redictUrl;
+    @Autowired
+    private UserMapper userMapper;
 
     @GetMapping("/callback")
-    public String callback(@RequestParam(name="code") String code){
+    public String callback(@RequestParam(name="code") String code, HttpServletRequest request, HttpServletResponse response){
         AccessTokenDTO accessTokenDTO = new AccessTokenDTO();
         accessTokenDTO.setClient_id(clientId);
         accessTokenDTO.setClient_secret(clientSecret);
@@ -32,17 +41,20 @@ public class CallBackController {
         String accessToken = gitHubProvider.getAccessToken(accessTokenDTO);
         System.out.println(accessToken);
 
-        String string = gitHubProvider.getGitHubUser(accessToken);
+        GitHubUser gitHubUser = gitHubProvider.getGitHubUser(accessToken);
+        if(gitHubUser!=null){
+            User user = new User();
+            user.setName(gitHubUser.getNickName());
+            String token = UUID.randomUUID().toString();
+            user.setToken(token);
+            user.setGmtCreated(Long.valueOf(System.currentTimeMillis()));
+            user.setGmtModified(Long.valueOf(System.currentTimeMillis()));
+            userMapper.save(user);
+            response.addCookie(new Cookie("token",token));
+            return "redirect:/";
+        }else{
+            return "redirect:/";
 
-        JSONObject jsonObject = JSONObject.parseObject(string);
-        GitHubUser gitHubUser = new GitHubUser();
-        gitHubUser.setId(Long.valueOf(jsonObject.get("id").toString()));
-        gitHubUser.setNickName((String)jsonObject.get("login"));
-        gitHubUser.setEmail((String)jsonObject.get("email"));
-        gitHubUser.setAvatar((String)jsonObject.get("avatar_url"));
-        gitHubUser.setBio((String)jsonObject.get("bio"));
-        System.out.println(gitHubUser.toString());
-
-        return "index";
+        }
     }
 }

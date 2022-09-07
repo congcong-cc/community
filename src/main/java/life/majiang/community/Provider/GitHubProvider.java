@@ -31,14 +31,22 @@ public class GitHubProvider {
         return null;
     }
 
-    public String getGitHubUser(String accessToken){
+    public GitHubUser getGitHubUser(String accessToken){
         OkHttpClient client = new OkHttpClient();
         Request request = new Request.Builder()
                 .url("https://api.github.com/user")
                 .addHeader("Authorization","token "+accessToken)
                 .build();
         try (Response response = client.newCall(request).execute()) {
-            return response.body().string();
+            String string = response.body().string();
+            JSONObject jsonObject = JSONObject.parseObject(string);
+            GitHubUser gitHubUser = new GitHubUser();
+            gitHubUser.setId(Long.valueOf(jsonObject.get("id").toString()));
+            gitHubUser.setNickName((String)jsonObject.get("login"));
+            gitHubUser.setEmail((String)jsonObject.get("email"));
+            gitHubUser.setAvatar((String)jsonObject.get("avatar_url"));
+            gitHubUser.setBio((String)jsonObject.get("bio"));
+            return gitHubUser;
         } catch (IOException e) {
             e.printStackTrace();
         }
