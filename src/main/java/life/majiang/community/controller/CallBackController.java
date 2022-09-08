@@ -39,7 +39,6 @@ public class CallBackController {
         accessTokenDTO.setCode(code);
         accessTokenDTO.setRedirect_url(redictUrl);
         String accessToken = gitHubProvider.getAccessToken(accessTokenDTO);
-        System.out.println(accessToken);
 
         GitHubUser gitHubUser = gitHubProvider.getGitHubUser(accessToken);
         if(gitHubUser!=null){
@@ -47,6 +46,7 @@ public class CallBackController {
             user.setName(gitHubUser.getNickName());
             String token = UUID.randomUUID().toString();
             user.setToken(token);
+            user.setAvatarUrl(gitHubUser.getAvatar());
             user.setGmtCreated(Long.valueOf(System.currentTimeMillis()));
             user.setGmtModified(Long.valueOf(System.currentTimeMillis()));
             userMapper.save(user);

@@ -49,21 +49,22 @@
     <div class="row">
         <div class="col-md-9 col-lg-9">
             <h2><span class="glyphicon glyphicon-edit" aria-hidden="true">提问</span></h2>
-            <form action="">
+            <form action="/publish" method="post">
                 <div class="form-group">
                     <label for="title">问题标题(简单扼要):</label>
-                    <input type="text" class="form-control" id="title" name="title" placeholder="问题标题...">
+                    <input type="text" class="form-control" id="title" name="title" placeholder="问题标题..." th:value="${title}">
                 </div>
                 <div class="form-group">
                     <label for="description">问题描述(必填，请参照右侧提示):</label>
-                    <textarea type="text" class="form-control" id="description" name="description" cols="30" rows="10">
+                    <textarea type="text" class="form-control" id="description" name="description" placeholder="请输入问题的精简描述!" cols="30" rows="10" th:text="${description}">
                     </textarea>
                 </div>
                 <div class="form-group">
                     <label for="tag">问题标题(简单扼要):</label>
-                    <input type="text" class="form-control" id="tag" name="tag" placeholder="输入标签以”,”分隔">
+                    <input type="text" class="form-control" id="tag" name="tag" placeholder="输入标签以”,”分隔" th:value="${tag}">
                 </div>
-                <button type="submit" class="btn btn-success">提问</button>
+                <div class="alert alert-danger btn-error-login" th:if="${error!=null}" th:text="${error}"></div>
+                <button type="submit" class="btn btn-success">发布</button>
             </form>
         </div>
         <div class="col-md-3 col-lg-3">
@@ -72,6 +73,7 @@
                 <li>问题标题:请用精简的语言描述你的问题，不超过25个字</li>
                 <li>问题描述:详细补充问题内容，并确保问题描述清晰直观，并补充一些相关资料</li>
                 <li>选择标签:对问题进行分类，以便别人快速切入，以逗号进行分隔</li>
+                <li>关于积分： 发起一个问题会消耗您 20 个积分, 每多一个回复你将获得 5 个积分的奖励 ,为了您的利益, 在发起问题的时候希望能够更好的描述您的问题以及多使用站内搜索功能.</li>
             </ul>
         </div>
     </div>
