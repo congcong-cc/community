@@ -1,0 +1,12 @@
+body{
+    background: #efefef;
+}
+.container-ask{
+    background: white;
+    margin: 30px;
+}
+.btn-success{
+    float: right;
+    margin-bottom: 20px;
+    margin-right: 30px;
+}
