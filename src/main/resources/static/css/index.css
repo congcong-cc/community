@@ -1,0 +1,19 @@
+body{
+    background: #efefef;
+}
+.media-object{
+    width: 40px;
+    height: 40px;
+}
+.detail-information{
+    font-size: 12px;
+    font-weight: normal;
+    color: #999
+}
+.container-ask{
+    margin: 30px 50px;
+    background: white;
+}
+.nav-color{
+    background: #33cfff;
+}

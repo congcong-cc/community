@@ -65,7 +65,7 @@ public class PublishController {
         question.setTitle(title);
         question.setDescription(description);
         question.setTag(tag);
-        question.setCreator(user.getName());
+        question.setCreator(user.getId());
         questionMapper.insert(question);
         return "redirect:/";
     }
