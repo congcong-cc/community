@@ -50,4 +50,46 @@ public class QuestionServiceImpl implements QuestionService {
         paginationDTO.setOtherAttributes(totalPages,page);
         return paginationDTO ;
     }
+
+    @Override
+    public PaginationDTO listByUserId(Integer userId, Integer page, Integer size) {
+        int totalCount = questionMapper.totalByUserId(userId);
+        int totalPages;
+        if(totalCount%size==0&&totalCount!=0){
+            totalPages=totalCount/size;
+        }else{
+            totalPages=totalCount/size+1;
+        }
+        // 防止页码错误，超出页数范围
+        if(page>totalPages){
+            page=totalPages;
+        }
+        if(page<=0){
+            page=1;
+        }
+        int offset = size*(page-1);
+        List<Question> questionList = questionMapper.listByUserId(userId,offset,size);
+        List<QuestionDTO> questionDTOList = new ArrayList<>();
+        PaginationDTO paginationDTO = new PaginationDTO();
+        for (Question question : questionList) {
+            QuestionDTO questionDTO = new QuestionDTO();
+            BeanUtils.copyProperties(question,questionDTO);
+            User user = userMapper.findById(question.getCreator());
+            questionDTO.setUser(user);
+            questionDTOList.add(questionDTO);
+        }
+        paginationDTO.setData(questionDTOList);
+        paginationDTO.setOtherAttributes(totalPages,page);
+        return paginationDTO ;
+    }
+
+    @Override
+    public QuestionDTO getById(Integer id) {
+        Question question = questionMapper.getById(id);
+        QuestionDTO questionDTO = new QuestionDTO();
+        User user = userMapper.findById(question.getCreator());
+        BeanUtils.copyProperties(question,questionDTO);
+        questionDTO.setUser(user);
+        return questionDTO;
+    }
 }

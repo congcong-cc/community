@@ -1,0 +1,49 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>码匠社区</title>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <meta name="referrer" content="no-referrer" />
+    <link rel="stylesheet" href="../css/bootstrap.min.css"/>
+    <link rel="stylesheet" href="../css/bootstrap-theme.min.css"/>
+    <link rel="stylesheet" href="../css/index.css"/>
+    <link rel="stylesheet" href="../css/question.css"/>
+    <script src="../js/jquery-3.6.1.js" type="application/javascript"></script>
+    <script src="../js/bootstrap.min.js" type="application/javascript"></script>
+</head>
+<body>
+<div th:insert="navigation :: copy"></div>
+<div class="container-fluid container-ask ">
+    <div class="row">
+        <div class="col-md-9 col-lg-9">
+            <h3 th:text="${questionDTO.title}"></span></h3>
+            <hr>
+            <div class="detail-information">
+                作者 <span th:text="${questionDTO.user.name}"></span> |
+                发布于 <span th:text="${questionDTO.gmtCreated}"></span>|
+                阅读数 <span th:text="${questionDTO.viewCount}"></span>
+            </div>
+            <hr>
+            <div th:text="${questionDTO.description}">
+            </div>
+            <br>
+            <a th:href="|/publish|"><span class="glyphicon glyphicon-pencil" aria-hidden="true">编辑</span></a>
+        </div>
+        <div class="col-md-3 col-lg-3">
+            <h4>发起人</h4>
+            <div class="creator">
+                <img class="img-circle" th:src="${questionDTO.user.avatarUrl}">
+                <span th:text="${questionDTO.user.name}"></span>
+            </div>
+            <hr>
+            <div>
+                相关问题
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

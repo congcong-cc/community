@@ -15,6 +15,15 @@ public interface QuestionMapper {
     @Select("SELECT * FROM question LIMIT #{offset},#{size}")
     List<Question> list(int offset, Integer size);
 
+    @Select("SELECT * FROM question WHERE creator = #{userId} LIMIT #{offset},#{size}")
+    List<Question> listByUserId(Integer userId,int offset, Integer size);
+
     @Select("SELECT count(1) FROM question")
     int total();
+
+    @Select("SELECT count(1) FROM question WHERE creator = #{userId}")
+    int totalByUserId(Integer userId);
+
+    @Select("SELECT * FROM question WHERE id = #{id}")
+    Question getById(Integer id);
 }

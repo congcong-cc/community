@@ -27,7 +27,7 @@
                     </a>
                 </div>
                 <div class="media-body">
-                    <h4 class="media-heading" th:text="${question.title}"></h4>
+                    <a th:href="|/question/${question.id}|"><h4 class="media-heading" th:text="${question.title}"></h4></a>
                     <span th:text="${question.description}"></span><span class="detail-information">&emsp;<span th:text="${question.interest}"></span> 人关注 • <span th:text="${question.commentCount}"></span> 个回复 • <span th:text="${question.viewCount}"></span> 次浏览 • <span th:text="${question.gmtCreated}"></span> </span>
                 </div>
             </div>

@@ -25,21 +25,16 @@ public class IndexController {
                         @RequestParam(name="page",defaultValue = "1") Integer page,
                         @RequestParam(name = "size",defaultValue = "5",required = false) Integer size){
         Cookie[] cookies = request.getCookies();
-        if(cookies!=null&&cookies.length!=0) {
-            for (Cookie cookie : cookies) {
+        if(cookies!=null&&cookies.length!=0){
+            for (Cookie cookie : request.getCookies()) {
                 if(cookie.getName().equals("token")){
-                    String token = cookie.getValue();
-                    User user = userMapper.findByToken(token);
-                    if(user!=null){
-                        request.getSession().setAttribute("user",user);
-                    }
-                    break;
+                    User user = userMapper.findByToken(cookie.getValue());
+                    request.getSession().setAttribute("user",user);
                 }
             }
         }
         PaginationDTO paginationDTO = questionService.list(page, size);
         model.addAttribute("pagination",paginationDTO);
-
         return "index";
     }
 }

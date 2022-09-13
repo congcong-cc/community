@@ -17,3 +17,6 @@ body{
 .nav-color{
     background: #33cfff;
 }
+.container-ask .list-group{
+    margin: 20px;
+}

@@ -46,21 +46,7 @@ public class PublishController {
             model.addAttribute("error","标签不能为空!");
             return "publish";
         }
-        User user = null;
-        Cookie[] cookies = request.getCookies();
-        if(cookies!=null&&cookies.length!=0) {
-            for (Cookie cookie : cookies) {
-                if(cookie.getName().equals("token")){
-                    String token = cookie.getValue();
-                    user = userMapper.findByToken(token);
-                    break;
-                }
-            }
-        }
-        if(user==null){
-            model.addAttribute("error","User not logged in!");
-            return "publish";
-        }
+        User user = (User)request.getSession().getAttribute("user");
         Question question = new Question();
         question.setTitle(title);
         question.setDescription(description);
