@@ -32,7 +32,7 @@ public class QuestionServiceImpl implements QuestionService {
         if(page<=0){
             page=1;
         }
-        if(page>totalPages){
+        if(page>totalPages&&totalPages>0){
             page=totalPages;
         }
         int offset = size*(page-1);
@@ -42,7 +42,7 @@ public class QuestionServiceImpl implements QuestionService {
         for (Question question : questionList) {
             QuestionDTO questionDTO = new QuestionDTO();
             BeanUtils.copyProperties(question,questionDTO);
-            User user = userMapper.findById(question.getCreator());
+            User user = userMapper.findByAccountId(String.valueOf(question.getCreator()));
             questionDTO.setUser(user);
             questionDTOList.add(questionDTO);
         }
@@ -52,8 +52,8 @@ public class QuestionServiceImpl implements QuestionService {
     }
 
     @Override
-    public PaginationDTO listByUserId(Integer userId, Integer page, Integer size) {
-        int totalCount = questionMapper.totalByUserId(userId);
+    public PaginationDTO listByUserAccountId(Integer accountId, Integer page, Integer size) {
+        int totalCount = questionMapper.totalByUserAccountId(accountId);
         int totalPages;
         if(totalCount%size==0&&totalCount!=0){
             totalPages=totalCount/size;
@@ -68,14 +68,15 @@ public class QuestionServiceImpl implements QuestionService {
             page=1;
         }
         int offset = size*(page-1);
-        List<Question> questionList = questionMapper.listByUserId(userId,offset,size);
+        List<Question> questionList = questionMapper.listByUserAccountId(accountId,offset,size);
         List<QuestionDTO> questionDTOList = new ArrayList<>();
         PaginationDTO paginationDTO = new PaginationDTO();
         for (Question question : questionList) {
             QuestionDTO questionDTO = new QuestionDTO();
             BeanUtils.copyProperties(question,questionDTO);
-            User user = userMapper.findById(question.getCreator());
+            User user = userMapper.findByAccountId(String.valueOf(question.getCreator()));
             questionDTO.setUser(user);
+            questionDTO.setCreator(String.valueOf(question.getCreator()));
             questionDTOList.add(questionDTO);
         }
         paginationDTO.setData(questionDTOList);
@@ -87,9 +88,19 @@ public class QuestionServiceImpl implements QuestionService {
     public QuestionDTO getById(Integer id) {
         Question question = questionMapper.getById(id);
         QuestionDTO questionDTO = new QuestionDTO();
-        User user = userMapper.findById(question.getCreator());
+        User user = userMapper.findByAccountId(String.valueOf(question.getCreator()));
         BeanUtils.copyProperties(question,questionDTO);
+        questionDTO.setCreator(String.valueOf(question.getCreator()));
         questionDTO.setUser(user);
         return questionDTO;
+    }
+
+    @Override
+    public void insertOrUpdate(Question question) {
+        if(question.getId()==null){
+            questionMapper.insert(question);
+        }else{
+            questionMapper.update(question);
+        }
     }
 }

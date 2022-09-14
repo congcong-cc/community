@@ -6,6 +6,7 @@ import life.majiang.community.Provider.GitHubUser;
 import life.majiang.community.dto.AccessTokenDTO;
 import life.majiang.community.mapper.UserMapper;
 import life.majiang.community.model.User;
+import life.majiang.community.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
@@ -29,7 +30,7 @@ public class CallBackController {
     @Value("${github.redirect.url}")
     private String redictUrl;
     @Autowired
-    private UserMapper userMapper;
+    private UserService userService;
 
     @GetMapping("/callback")
     public String callback(@RequestParam(name="code") String code, HttpServletRequest request, HttpServletResponse response){
@@ -46,15 +47,26 @@ public class CallBackController {
             user.setName(gitHubUser.getNickName());
             String token = UUID.randomUUID().toString();
             user.setToken(token);
+            user.setAccountId(String.valueOf(gitHubUser.getId()));
             user.setAvatarUrl(gitHubUser.getAvatar());
             user.setGmtCreated(Long.valueOf(System.currentTimeMillis()));
             user.setGmtModified(Long.valueOf(System.currentTimeMillis()));
-            userMapper.save(user);
+            userService.createOrUpdate(user);
             response.addCookie(new Cookie("token",token));
             return "redirect:/";
         }else{
             return "redirect:/";
 
         }
+    }
+
+    @GetMapping("/logout")
+    public String logOut(HttpServletRequest request,HttpServletResponse response){
+        Cookie newCookie=new Cookie("token",null);
+        newCookie.setMaxAge(0);
+        newCookie.setPath("/");
+        response.addCookie(newCookie);
+        request.getSession().setAttribute("user",null);
+        return "redirect:/";
     }
 }

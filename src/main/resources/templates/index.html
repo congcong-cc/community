@@ -20,15 +20,17 @@
         <div class="col-md-9 col-lg-9">
             <h2><span class="glyphicon glyphicon-list" aria-hidden="true"> 发现</span></h2>
             <br>
-            <div class="media" th:each="question,it:${pagination.data}">
-                <div class="media-left">
-                    <a href="#">
-                        <img class="media-object" th:src="${question.user.avatarUrl}" alt="...">
-                    </a>
-                </div>
-                <div class="media-body">
-                    <a th:href="|/question/${question.id}|"><h4 class="media-heading" th:text="${question.title}"></h4></a>
-                    <span th:text="${question.description}"></span><span class="detail-information">&emsp;<span th:text="${question.interest}"></span> 人关注 • <span th:text="${question.commentCount}"></span> 个回复 • <span th:text="${question.viewCount}"></span> 次浏览 • <span th:text="${question.gmtCreated}"></span> </span>
+            <div th:if="${#lists.size(pagination.data)} gt 0">
+                <div class="media" th:each="question:${pagination.data}">
+                    <div class="media-left">
+                        <a href="#">
+                            <img class="media-object" th:src="${question.user.avatarUrl}" alt="...">
+                        </a>
+                    </div>
+                    <div class="media-body">
+                        <a th:href="|/question/${question.id}|"><h4 class="media-heading" th:text="${question.title}"></h4></a>
+                        <span th:text="${question.description}"></span><span class="detail-information">&emsp;<span th:text="${question.interest}"></span> 人关注 • <span th:text="${question.commentCount}"></span> 个回复 • <span th:text="${question.viewCount}"></span> 次浏览 • <span th:text="${question.gmtCreated}"></span> </span>
+                    </div>
                 </div>
             </div>
             <nav aria-label="Page navigation">
