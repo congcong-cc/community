@@ -5,8 +5,11 @@ import life.majiang.community.dto.QuestionDTO;
 import life.majiang.community.mapper.QuestionMapper;
 import life.majiang.community.mapper.UserMapper;
 import life.majiang.community.model.Question;
+import life.majiang.community.model.QuestionExample;
 import life.majiang.community.model.User;
+import life.majiang.community.model.UserExample;
 import life.majiang.community.service.QuestionService;
+import org.apache.ibatis.session.RowBounds;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -15,13 +18,15 @@ import java.util.ArrayList;
 import java.util.List;
 @Component
 public class QuestionServiceImpl implements QuestionService {
-    @Autowired
+    @Autowired(required = false)
     private QuestionMapper questionMapper;
-    @Autowired
+    @Autowired(required = false)
     private UserMapper userMapper;
     @Override
     public PaginationDTO list(Integer page, Integer size) {
-        int totalCount = questionMapper.total();
+        QuestionExample example = new QuestionExample();
+        example.createCriteria().getAllCriteria();
+        int totalCount = (int)questionMapper.countByExample(example);
         int totalPages;
         if(totalCount%size==0){
             totalPages=totalCount/size;
@@ -36,13 +41,18 @@ public class QuestionServiceImpl implements QuestionService {
             page=totalPages;
         }
         int offset = size*(page-1);
-        List<Question> questionList = questionMapper.list(offset,size);
+        QuestionExample questionExample = new QuestionExample();
+        questionExample.createCriteria().getAllCriteria();
+        List<Question> questionList = questionMapper.selectByExampleWithRowbounds(questionExample, new RowBounds(offset, size));
         List<QuestionDTO> questionDTOList = new ArrayList<>();
         PaginationDTO paginationDTO = new PaginationDTO();
         for (Question question : questionList) {
             QuestionDTO questionDTO = new QuestionDTO();
             BeanUtils.copyProperties(question,questionDTO);
-            User user = userMapper.findByAccountId(String.valueOf(question.getCreator()));
+            UserExample example1 = new UserExample();
+            example1.createCriteria().andAccountIdEqualTo(String.valueOf(question.getCreator()));
+            List<User> users = userMapper.selectByExample(example1);
+            User user = users.get(0);
             questionDTO.setUser(user);
             questionDTOList.add(questionDTO);
         }
@@ -53,7 +63,9 @@ public class QuestionServiceImpl implements QuestionService {
 
     @Override
     public PaginationDTO listByUserAccountId(Integer accountId, Integer page, Integer size) {
-        int totalCount = questionMapper.totalByUserAccountId(accountId);
+        QuestionExample example = new QuestionExample();
+        example.createCriteria().andCreatorEqualTo(accountId);
+        int totalCount = (int)questionMapper.countByExample(example);
         int totalPages;
         if(totalCount%size==0&&totalCount!=0){
             totalPages=totalCount/size;
@@ -68,13 +80,18 @@ public class QuestionServiceImpl implements QuestionService {
             page=1;
         }
         int offset = size*(page-1);
-        List<Question> questionList = questionMapper.listByUserAccountId(accountId,offset,size);
+        QuestionExample example2 = new QuestionExample();
+        example2.createCriteria().andCreatorEqualTo(accountId);
+        List<Question> questionList = questionMapper.selectByExampleWithRowbounds(example2,new RowBounds(offset,size));
         List<QuestionDTO> questionDTOList = new ArrayList<>();
         PaginationDTO paginationDTO = new PaginationDTO();
         for (Question question : questionList) {
             QuestionDTO questionDTO = new QuestionDTO();
             BeanUtils.copyProperties(question,questionDTO);
-            User user = userMapper.findByAccountId(String.valueOf(question.getCreator()));
+            UserExample example1 = new UserExample();
+            example1.createCriteria().andAccountIdEqualTo(String.valueOf(question.getCreator()));
+            List<User> users = userMapper.selectByExample(example1);
+            User user = users.get(0);
             questionDTO.setUser(user);
             questionDTO.setCreator(String.valueOf(question.getCreator()));
             questionDTOList.add(questionDTO);
@@ -86,9 +103,15 @@ public class QuestionServiceImpl implements QuestionService {
 
     @Override
     public QuestionDTO getById(Integer id) {
-        Question question = questionMapper.getById(id);
+        QuestionExample example = new QuestionExample();
+        example.createCriteria().andIdEqualTo(id);
+        List<Question> questionList = questionMapper.selectByExample(example);
+        Question question = questionList.get(0);
         QuestionDTO questionDTO = new QuestionDTO();
-        User user = userMapper.findByAccountId(String.valueOf(question.getCreator()));
+        UserExample example1 = new UserExample();
+        example1.createCriteria().andAccountIdEqualTo(String.valueOf(question.getCreator()));
+        List<User> users = userMapper.selectByExample(example1);
+        User user = users.get(0);
         BeanUtils.copyProperties(question,questionDTO);
         questionDTO.setCreator(String.valueOf(question.getCreator()));
         questionDTO.setUser(user);
@@ -100,7 +123,9 @@ public class QuestionServiceImpl implements QuestionService {
         if(question.getId()==null){
             questionMapper.insert(question);
         }else{
-            questionMapper.update(question);
+            QuestionExample example = new QuestionExample();
+            example.createCriteria().andIdEqualTo(question.getId());
+            questionMapper.updateByExample(question, example);
         }
     }
 }
