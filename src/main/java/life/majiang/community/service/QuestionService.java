@@ -14,4 +14,6 @@ public interface QuestionService {
     QuestionDTO getById(Integer id);
 
     void insertOrUpdate(Question question);
+
+    void incViewCount(Integer id);
 }

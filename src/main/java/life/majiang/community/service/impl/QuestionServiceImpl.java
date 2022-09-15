@@ -2,6 +2,7 @@ package life.majiang.community.service.impl;
 
 import life.majiang.community.dto.PaginationDTO;
 import life.majiang.community.dto.QuestionDTO;
+import life.majiang.community.mapper.QuestionExtraMapper;
 import life.majiang.community.mapper.QuestionMapper;
 import life.majiang.community.mapper.UserMapper;
 import life.majiang.community.model.Question;
@@ -22,6 +23,8 @@ public class QuestionServiceImpl implements QuestionService {
     private QuestionMapper questionMapper;
     @Autowired(required = false)
     private UserMapper userMapper;
+    @Autowired(required = false)
+    private QuestionExtraMapper questionExtraMapper;
     @Override
     public PaginationDTO list(Integer page, Integer size) {
         QuestionExample example = new QuestionExample();
@@ -121,11 +124,20 @@ public class QuestionServiceImpl implements QuestionService {
     @Override
     public void insertOrUpdate(Question question) {
         if(question.getId()==null){
+            question.setInterest(0);
+            question.setCommentCount(0);
+            question.setRedHeart(0);
+            question.setViewCount(0);
             questionMapper.insert(question);
         }else{
             QuestionExample example = new QuestionExample();
             example.createCriteria().andIdEqualTo(question.getId());
             questionMapper.updateByExample(question, example);
         }
+    }
+
+    @Override
+    public void incViewCount(Integer id) {
+        questionExtraMapper.incViewCount(id);
     }
 }
