@@ -105,7 +105,7 @@ public class QuestionServiceImpl implements QuestionService {
     }
 
     @Override
-    public QuestionDTO getById(Integer id) {
+    public QuestionDTO getById(Long id) {
         QuestionExample example = new QuestionExample();
         example.createCriteria().andIdEqualTo(id);
         List<Question> questionList = questionMapper.selectByExample(example);
@@ -124,10 +124,10 @@ public class QuestionServiceImpl implements QuestionService {
     @Override
     public void insertOrUpdate(Question question) {
         if(question.getId()==null){
-            question.setInterest(0);
-            question.setCommentCount(0);
-            question.setRedHeart(0);
-            question.setViewCount(0);
+            question.setInterest(0L);
+            question.setCommentCount(0L);
+            question.setRedHeart(0L);
+            question.setViewCount(0L);
             questionMapper.insert(question);
         }else{
             QuestionExample example = new QuestionExample();
@@ -137,7 +137,7 @@ public class QuestionServiceImpl implements QuestionService {
     }
 
     @Override
-    public void incViewCount(Integer id) {
+    public void incViewCount(Long id) {
         questionExtraMapper.incViewCount(id);
     }
 }

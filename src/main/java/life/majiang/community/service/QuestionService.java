@@ -11,9 +11,9 @@ public interface QuestionService {
 
     PaginationDTO listByUserAccountId(Integer accountId,Integer page, Integer size);
 
-    QuestionDTO getById(Integer id);
+    QuestionDTO getById(Long id);
 
     void insertOrUpdate(Question question);
 
-    void incViewCount(Integer id);
+    void incViewCount(Long id);
 }
