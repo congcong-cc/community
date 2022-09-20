@@ -23,6 +23,7 @@ public class WebConfig implements WebMvcConfigurer {
         patterns.add("/js/**");
         patterns.add("/fonts/**");
         patterns.add("/comment");
+        patterns.add("/question/**");
         registry.addInterceptor(loginInterceptor).addPathPatterns("/**").excludePathPatterns(patterns);
     }
 }

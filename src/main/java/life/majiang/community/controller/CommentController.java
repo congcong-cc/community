@@ -1,6 +1,6 @@
 package life.majiang.community.controller;
 
-import life.majiang.community.dto.CommentDTO;
+import life.majiang.community.dto.CommentCreateDTO;
 import life.majiang.community.dto.ResultDTO;
 import life.majiang.community.enums.CodeEnums;
 import life.majiang.community.model.Comment;
@@ -11,10 +11,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
-import java.time.LocalDate;
 import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
 
 @Controller
 public class CommentController {
@@ -23,12 +20,12 @@ public class CommentController {
 
     @ResponseBody
     @PostMapping("/comment")
-    public Object post(@RequestBody CommentDTO commentDTO,
+    public Object post(@RequestBody CommentCreateDTO commentDTO,
                        HttpServletRequest request){
         ResultDTO resultDTO = new ResultDTO();
         User user = (User)request.getSession().getAttribute("user");
         if(user==null){
-            resultDTO.setCode(CodeEnums.OK.getCode());
+            resultDTO.setCode(CodeEnums.USER_NOT_LOGIN.getCode());
             resultDTO.setMessage("用户未登录");
             return resultDTO;
         }

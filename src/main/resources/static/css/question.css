@@ -2,3 +2,19 @@
     width: 30px;
     height: 30px
 }
+.question-reply{
+    margin: 10px 0;
+}
+.question-reply button{
+    float: right;
+    margin: 10px 0;
+}
+.question-reply .creator{
+    margin: 10px 0;
+}
+.comments .agree_comment .comment_create_time{
+    float:right;
+    font-size: 12px;
+    font-weight: normal;
+    color: #999
+}

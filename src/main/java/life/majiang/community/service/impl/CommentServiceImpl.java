@@ -1,21 +1,24 @@
 package life.majiang.community.service.impl;
 
+import life.majiang.community.dto.CommentDTO;
 import life.majiang.community.dto.ResultDTO;
 import life.majiang.community.enums.CodeEnums;
 import life.majiang.community.enums.CommentTypeEnum;
 import life.majiang.community.mapper.CommentMapper;
 import life.majiang.community.mapper.QuestionExtraMapper;
 import life.majiang.community.mapper.QuestionMapper;
-import life.majiang.community.model.Comment;
-import life.majiang.community.model.CommentExample;
-import life.majiang.community.model.Question;
-import life.majiang.community.model.QuestionExample;
+import life.majiang.community.mapper.UserMapper;
+import life.majiang.community.model.*;
 import life.majiang.community.service.CommentService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Component
 public class CommentServiceImpl implements CommentService {
@@ -25,6 +28,8 @@ public class CommentServiceImpl implements CommentService {
     private QuestionMapper questionMapper;
     @Autowired(required = false)
     private QuestionExtraMapper questionExtraMapper;
+    @Autowired(required = false)
+    private UserMapper userMapper;
     @Override
     public ResultDTO insert(Comment comment) {
         ResultDTO resultDTO = new ResultDTO();
@@ -60,6 +65,32 @@ public class CommentServiceImpl implements CommentService {
         resultDTO.setCode(CodeEnums.OK.getCode());
         resultDTO.setMessage(CodeEnums.OK.getMessage());
         return resultDTO;
+    }
+
+    @Override
+    public List<CommentDTO> getByQuestionId(Long id) {
+        CommentExample commentExample = new CommentExample();
+        commentExample.createCriteria()
+                .andParentIdEqualTo(id)
+                .andTypeEqualTo(CommentTypeEnum.QUESTION.getType());
+        List<Comment> comments = commentMapper.selectByExample(commentExample);
+        if(comments.size()<=0){
+            return new ArrayList<>();
+        }
+
+        Set<Integer> collect = comments.stream().map(m -> m.getCommentator()).collect(Collectors.toSet());
+        List<String> usersAccountId = new ArrayList<>();
+        for (Integer integer : collect) {
+            usersAccountId.add(String.valueOf(integer));
+        }
+        UserExample userExample = new UserExample();
+        userExample.createCriteria().andAccountIdIn(usersAccountId);
+        List<User> users = userMapper.selectByExample(userExample);
+        Map<String, User> userMap = users.stream().collect(Collectors.toMap(user -> user.getAccountId(), user -> user));
+        List<CommentDTO> commentDTOList = new ArrayList<>();
+
+
+        return ;
     }
 
     @Transactional

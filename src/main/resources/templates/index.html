@@ -13,6 +13,15 @@
     <script src="js/jquery-3.6.1.js" type="application/javascript"></script>
     <script src="js/bootstrap.min.js" type="application/javascript"></script>
 </head>
+<script type="application/javascript">
+    window.onload=function (){
+        var isClose  = window.localStorage.getItem("visuable");
+        if(isClose=="true"){
+            window.localStorage.removeItem("visuable");
+            window.close()
+        }
+    }
+</script>
 <body>
 <div th:insert="navigation :: copy"></div>
 <div class="container-fluid container-ask ">
