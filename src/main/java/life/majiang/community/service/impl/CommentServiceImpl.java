@@ -10,6 +10,7 @@ import life.majiang.community.mapper.QuestionMapper;
 import life.majiang.community.mapper.UserMapper;
 import life.majiang.community.model.*;
 import life.majiang.community.service.CommentService;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
@@ -73,6 +74,7 @@ public class CommentServiceImpl implements CommentService {
         commentExample.createCriteria()
                 .andParentIdEqualTo(id)
                 .andTypeEqualTo(CommentTypeEnum.QUESTION.getType());
+        commentExample.setOrderByClause("gmt_created desc");
         List<Comment> comments = commentMapper.selectByExample(commentExample);
         if(comments.size()<=0){
             return new ArrayList<>();
@@ -88,9 +90,14 @@ public class CommentServiceImpl implements CommentService {
         List<User> users = userMapper.selectByExample(userExample);
         Map<String, User> userMap = users.stream().collect(Collectors.toMap(user -> user.getAccountId(), user -> user));
         List<CommentDTO> commentDTOList = new ArrayList<>();
+        for (Comment comment : comments) {
+            CommentDTO commentDTO = new CommentDTO();
+            BeanUtils.copyProperties(comment,commentDTO);
+            commentDTO.setUser(userMap.get(String.valueOf(comment.getCommentator())));
+            commentDTOList.add(commentDTO);
+        }
 
-
-        return ;
+        return commentDTOList;
     }
 
     @Transactional

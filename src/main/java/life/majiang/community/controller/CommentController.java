@@ -6,6 +6,7 @@ import life.majiang.community.enums.CodeEnums;
 import life.majiang.community.model.Comment;
 import life.majiang.community.model.User;
 import life.majiang.community.service.CommentService;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
@@ -27,6 +28,11 @@ public class CommentController {
         if(user==null){
             resultDTO.setCode(CodeEnums.USER_NOT_LOGIN.getCode());
             resultDTO.setMessage("用户未登录");
+            return resultDTO;
+        }
+        if(commentDTO.getContent()==null|| StringUtils.isBlank(commentDTO.getContent())){
+            resultDTO.setMessage(CodeEnums.COMMENT_CONTENT_IS_NULL.getMessage());
+            resultDTO.setCode(CodeEnums.COMMENT_CONTENT_IS_NULL.getCode());
             return resultDTO;
         }
         Comment comment = new Comment();

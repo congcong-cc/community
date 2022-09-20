@@ -32,25 +32,28 @@
             </div>
             <br>
             <a th:href="|/publish/${questionDTO.id}|" th:if="${session.user!=null&&questionDTO.creator==session.user.accountId}"><span class="glyphicon glyphicon-pencil" aria-hidden="true">编辑</span></a>
-            <div>
-                <h3><span th:text="${questionDTO.viewCount}"></span> 个回复</h3>
+            <div class="reply-count">
+                <h3><span th:text="${questionDTO.commentCount}"></span> 个回复</h3>
             </div>
             <hr>
-            <div class="media comments">
+            <div class="media comments" th:each="comment:${commentDTOList}">
                 <div class="media-left">
                     <a href="#">
-                        <img class="media-object" th:src="${questionDTO.user.avatarUrl}" alt="...">
+                        <img class="media-object" th:src="${comment.user.avatarUrl}" alt="...">
                     </a>
                 </div>
                 <div class="media-body">
-                    <h4 class="media-heading" th:text="${questionDTO.title}"></h4>
-                    <span th:text="${questionDTO.title}"></span>
+                    <span class="media-heading" th:text="${comment.user.name}"></span><br/>
+                    <span th:text="${comment.content}"></span>
                 </div>
                 <div class="agree_comment">
-                    <div class="glyphicon glyphicon-thumbs-up" aria-hidden="true"></div>
-                    <div class="glyphicon glyphicon-comment" aria-hidden="true"></div>
-                    <span class="comment_create_time" th:text="${questionDTO.gmtCreated}"></span>
+                    <div class="glyphicon glyphicon-thumbs-up red-heart" aria-hidden="true"></div>
+                    <div class="glyphicon glyphicon-comment comment" aria-hidden="true"></div>
+                    <span class="comment_create_time" th:text="${#dates.format(comment.gmtCreated,'yyyy-MM-dd HH:mm:ss')}"></span>
                 </div>
+            </div>
+            <div class="reply-submit">
+                <h3>提交回复</h3>
             </div>
             <hr>
             <div class="question-reply" th:if="${session.user}!=null">

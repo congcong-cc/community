@@ -7,7 +7,8 @@ public enum CodeEnums {
 
     QUESTION_IS_NOT_EXIST(6000,"问题不存在"),
 
-    COMMENT_IS_NOT_EXIST(7000,"评论不存在");
+    COMMENT_IS_NOT_EXIST(7000,"评论不存在"),
+    COMMENT_CONTENT_IS_NULL(7001,"评论内容不能为空");
     private Integer code;
     private String message;
 
